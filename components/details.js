@@ -23,7 +23,8 @@ const DetailsScreen = ({navigation}) => {
     getFaculty();
   }, []);
 
-  const [faculty,setFaculty] = useState({Email:''})
+  const [faculty,setFaculty] = useState('')
+  const [status,setStatus] = useState('Log In')
 
   async function getFaculty() {
     const res = await fetch('http://192.168.80.110:5000/getFaculty', {
@@ -56,6 +57,12 @@ const DetailsScreen = ({navigation}) => {
     setLoginState(data.message);
     console.log(data);
     if(data.code==1) navigation.navigate('Home') 
+    if(data.code==0){
+      setStatus('Wrong Credentials...')
+      setTimeout(() => {
+        setStatus('Log In')
+      }, 2000);
+    }
   };
   const onPressForgotPassword = () => {
     // Do something about forgot password operation
@@ -72,8 +79,6 @@ const DetailsScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}> Faculty Login</Text>
-      <Text style={styles.title2}>{LoginState}</Text>
-      <Text style={styles.title2}>{"Email : "}</Text>
       <View style={styles.inputView}>
         <TextInput
           style={styles.inputText}
@@ -94,7 +99,7 @@ const DetailsScreen = ({navigation}) => {
         <Text style={styles.forgotAndSignUpText}>Forgot Password?</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={onPressLogin} style={styles.loginBtn}>
-        <Text style={styles.loginText}>LOGIN </Text>
+        <Text style={styles.loginText}>{status}</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={onPressSignUp}>
         <Text style={styles.forgotAndSignUpText}>Signup</Text>
@@ -105,20 +110,20 @@ const DetailsScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#4FD3DA',
+    // backgroundColor: '#4FD3DA',
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
     fontWeight: 'bold',
     fontSize: 50,
-    color: '#fb5b5a',
+    // color: '#fb5b5a',
     marginBottom: 40,
   },
   title2: {
     fontWeight: 'bold',
     fontSize: 20,
-    color: '#fb5b5a',
+    // color: '#fb5b5a',
     marginBottom: 40,
   },
   inputView: {
@@ -135,7 +140,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   forgotAndSignUpText: {
-    color: 'white',
+    // color: 'white',
     fontSize: 11,
   },
   loginBtn: {
