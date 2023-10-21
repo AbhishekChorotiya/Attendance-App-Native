@@ -17,6 +17,10 @@ function Home({navigation,route}) {
   const [currentSSID, setCurrentSSID] = useState('Not found');
   const [students, setStudents] = useState([]);
 
+  if(route.params.value==null){
+    navigation.navigate('Create-Attendance');
+  }
+
   useEffect(() => {
     permission();
     getBackendData();
@@ -125,6 +129,28 @@ function Home({navigation,route}) {
     if (data == 'Logged Out') navigation.navigate('Details');
   }
 
+  async function handleMarkAttendance(){
+
+    // console.log(students)
+
+    const post_data = []
+    for(let val of students){
+      post_data.push({id:val.Id})
+    }
+
+    const res = await fetch('http://192.168.80.110:5000/markAttendance',{
+      method:'post',
+      headers:{
+        'Content-Type':'application/json',
+      },
+      body: JSON.stringify({data:post_data,course:route.params.value})
+    })
+
+    const data = await res.json()
+    console.log(data)
+
+  }
+
   return (
     <ScrollView>
       <View style={styles.parent}>
@@ -168,6 +194,7 @@ function Home({navigation,route}) {
             </View>
           ))}
         </View>
+        <Button title="Mark Attendance" onPress={handleMarkAttendance} />
       </View>
     </ScrollView>
   );

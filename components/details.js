@@ -26,6 +26,7 @@ const DetailsScreen = ({navigation}) => {
   const [faculty,setFaculty] = useState('')
   const [status,setStatus] = useState('Log In')
 
+
   async function getFaculty() {
     const res = await fetch('http://192.168.80.110:5000/getFaculty', {
       method: 'post',
@@ -35,7 +36,9 @@ const DetailsScreen = ({navigation}) => {
     });
 
     const data = await res.json();
-    if(data.code==1) navigation.navigate('Create-Attendance')
+    if(data.code==1){
+      navigation.navigate('Create-Attendance')
+    }
     setFaculty(data.data)
     setLoginState("Login State : " + data.message);
   }
