@@ -11,7 +11,7 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import WifiReborn from 'react-native-wifi-reborn';
 
-function Home({navigation}) {
+function Home({navigation,route}) {
   const [data, setData] = useState('');
   const [wifiList, setWifiList] = useState([]);
   const [currentSSID, setCurrentSSID] = useState('Not found');
@@ -129,7 +129,7 @@ function Home({navigation}) {
     <ScrollView>
       <View style={styles.parent}>
         <View style={styles.inner}>
-          <Text style={styles.text2}>Faculty Logged In</Text>
+          <Text style={styles.text2}>{route.params.value}</Text>
           {code ? (
             <Button title="Logout" onPress={handleLogOut} />
           ) : (
