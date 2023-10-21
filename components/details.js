@@ -35,7 +35,7 @@ const DetailsScreen = ({navigation}) => {
     });
 
     const data = await res.json();
-    if(data.code==1) navigation.navigate('Home')
+    if(data.code==1) navigation.navigate('Create-Attendance')
     setFaculty(data.data)
     setLoginState("Login State : " + data.message);
   }
@@ -56,7 +56,7 @@ const DetailsScreen = ({navigation}) => {
     const data = await res.json();
     setLoginState(data.message);
     console.log(data);
-    if(data.code==1) navigation.navigate('Home') 
+    if(data.code==1) navigation.navigate('Create-Attendance') 
     if(data.code==0){
       setStatus('Wrong Credentials...')
       setTimeout(() => {
