@@ -20,7 +20,7 @@ function CreateAttendance({navigation}) {
   }, []);
 
   async function getItems() {
-    const data = await fetch('http://192.168.80.110:5000/getCourseId', {
+    const data = await fetch('https://ruby-hippopotamus-veil.cyclic.app/getCourseId', {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',

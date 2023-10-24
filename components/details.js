@@ -9,6 +9,7 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {
   Colors,
@@ -18,17 +19,20 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const DetailsScreen = ({navigation}) => {
+const DetailsScreen = ({navigation, route}) => {
+  const [faculty, setFaculty] = useState('');
+  const [status, setStatus] = useState('Log In');
+  const [loader, setLoader] = useState(true);
+
   useEffect(() => {
-    getFaculty();
+    navigation.addListener('focus', () => {
+      setLoader(true)
+      getFaculty();
+    });
   }, []);
 
-  const [faculty,setFaculty] = useState('')
-  const [status,setStatus] = useState('Log In')
-
-
   async function getFaculty() {
-    const res = await fetch('http://192.168.80.110:5000/getFaculty', {
+    const res = await fetch('https://ruby-hippopotamus-veil.cyclic.app/getFaculty', {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
@@ -36,19 +40,21 @@ const DetailsScreen = ({navigation}) => {
     });
 
     const data = await res.json();
-    if(data.code==1){
-      navigation.navigate('Create-Attendance')
+    if (data.code == 1) {
+      navigation.navigate('Create-Attendance');
     }
-    setFaculty(data.data)
-    setLoginState("Login State : " + data.message);
+    setFaculty(data.data);
+    setLoginState('Login State : ' + data.message);
+    setLoader(false);
   }
 
   const onPressLogin = async () => {
     // Do something about login operation
+    setLoader(true)
     const state = {email, password: pass};
     console.log(state);
 
-    const res = await fetch('http://192.168.80.110:5000/facultyLogin', {
+    const res = await fetch('https://ruby-hippopotamus-veil.cyclic.app/facultyLogin', {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
@@ -59,11 +65,12 @@ const DetailsScreen = ({navigation}) => {
     const data = await res.json();
     setLoginState(data.message);
     console.log(data);
-    if(data.code==1) navigation.navigate('Create-Attendance') 
-    if(data.code==0){
-      setStatus('Wrong Credentials...')
+    if (data.code == 1) navigation.navigate('Create-Attendance');
+    if (data.code == 0) {
+      setLoader(false)
+      setStatus('Wrong Credentials...');
       setTimeout(() => {
-        setStatus('Log In')
+        setStatus('Log In');
       }, 2000);
     }
   };
@@ -79,7 +86,11 @@ const DetailsScreen = ({navigation}) => {
 
   const [LoginState, setLoginState] = useState('Login State : No info...');
 
-  return (
+  return loader ? (
+    <View style={styles.loader}>
+      <ActivityIndicator size="large" />
+    </View>
+  ) : (
     <View style={styles.container}>
       <Text style={styles.title}> Faculty Login</Text>
       <View style={styles.inputView}>
@@ -98,19 +109,23 @@ const DetailsScreen = ({navigation}) => {
           onChangeText={text => setPass(text)}
         />
       </View>
-      <TouchableOpacity onPress={onPressForgotPassword}>
-        <Text style={styles.forgotAndSignUpText}>Forgot Password?</Text>
-      </TouchableOpacity>
       <TouchableOpacity onPress={onPressLogin} style={styles.loginBtn}>
         <Text style={styles.loginText}>{status}</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={onPressSignUp}>
-        <Text style={styles.forgotAndSignUpText}>Signup</Text>
-      </TouchableOpacity>
+
     </View>
   );
 };
 const styles = StyleSheet.create({
+  loader: {
+    display: 'flex',
+    // backgroundColor:'yellow',
+    flexDirection: 'column',
+    flex: 1,
+    height: 665,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     // backgroundColor: '#4FD3DA',
@@ -142,12 +157,16 @@ const styles = StyleSheet.create({
     height: 50,
     color: 'white',
   },
+  loginText:{
+    color:'white',
+    fontWeight:'bold'
+  },
   forgotAndSignUpText: {
     // color: 'white',
     fontSize: 11,
   },
   loginBtn: {
-    width: '80%',
+    width: '60%',
     backgroundColor: '#fb5b5a',
     borderRadius: 25,
     height: 50,
